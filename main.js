@@ -1,13 +1,16 @@
 const remoteMain = require('@electron/remote/main')
 remoteMain.initialize()
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const { pathToFileURL }                 = require('url')
-
 const appExpress = express();
+const isDev = require('./assets/js/isDev');
+
+
 appExpress.set('view engine', 'ejs');
 appExpress.set('views', path.join(__dirname, 'app/views'));
 appExpress.use(express.static(path.join(__dirname, 'assets')));
@@ -49,9 +52,11 @@ function createWindow() {
             enableRemoteModule: true,
         }
     });
-    console.log(path.join(__dirname, 'preloader.js'));
+
     remoteMain.enable(mainWindow.webContents)
-    mainWindow.webContents.openDevTools();
+    if (isDev) {
+        mainWindow.webContents.openDevTools();
+    }
 
     mainWindow.loadURL('http://localhost:3000');
     mainWindow.removeMenu()
@@ -60,6 +65,8 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null
     })
+
+    checkForUpdates();
 }
 
 function createMenu() {
@@ -144,3 +151,43 @@ app.on('activate', () => {
         createWindow()
     }
 })
+
+function checkForUpdates() {
+    autoUpdater.autoDownload = true;
+
+    // Écoute des événements liés à la mise à jour
+    autoUpdater.on('checking-for-update', () => {
+        console.log('Vérification des mises à jour...');
+    });
+
+    autoUpdater.on('update-available', (info) => {
+        console.log('Mise à jour disponible. Détails :', info);
+        mainWindow.webContents.send('update_available');
+    });
+
+    autoUpdater.on('update-not-available', () => {
+        console.log('Pas de mise à jour disponible.');
+        mainWindow.webContents.send('update_not_available');
+    });
+
+    autoUpdater.on('error', (err) => {
+        console.error('Erreur lors de la mise à jour :', err);
+        mainWindow.webContents.send('update_error', err);
+    });
+
+    autoUpdater.on('download-progress', (progressObj) => {
+        mainWindow.webContents.send('download_progress', progressObj);
+    });
+
+    autoUpdater.on('update-downloaded', (info) => {
+        console.log('Mise à jour téléchargée. Prêt à installer.');
+        mainWindow.webContents.send('update_downloaded');
+    });
+
+    // Lancer la vérification des mises à jour
+    autoUpdater.checkForUpdatesAndNotify();
+}
+
+ipcMain.on('restart_app', () => {
+    autoUpdater.quitAndInstall();
+});
