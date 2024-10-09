@@ -1,72 +1,136 @@
 const remoteMain = require('@electron/remote/main')
 remoteMain.initialize()
 
-const { app, BrowserWindow, ipcMain } = require('electron');
-const { autoUpdater } = require('electron-updater');
+const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
+const autoUpdater = require('electron-updater').autoUpdater;
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
-const { pathToFileURL }                 = require('url')
+const ejse= require('ejs-electron')
+const { pathToFileURL } = require('url')
 const appExpress = express();
 const isDev = require('./assets/js/isDev');
-
-
-appExpress.set('view engine', 'ejs');
-appExpress.set('views', path.join(__dirname, 'app/views'));
-appExpress.use(express.static(path.join(__dirname, 'assets')));
-
-require('electron-reload')(__dirname, {
-    electron: require(`${__dirname}/node_modules/electron`)
-});
-
-app.disableHardwareAcceleration()
+const semver = require('semver')
+const LoggerUtil = require('electron-log')
+LoggerUtil.initialize()
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
 const appVersion = packageJson.version;
 
 
+function initAutoUpdater(event, data) {
 
-// Route pour la page principale
-appExpress.get('/', (req, res) => {
-    res.render('app', { bkid: '1', version: appVersion });  // Passer des variables si nécessaire
-});
-
-// Démarrer le serveur Express sur un port spécifique
-const server = appExpress.listen(3000, () => {
-    console.log('Serveur Express démarré sur le port 3000');
-});
-
-
-let mainWindow;
-
-function createWindow() {
-    mainWindow = new BrowserWindow({
-        width: 980,
-        height: 552,
-        frame: false,
-        backgroundColor: '#171614',
-        webPreferences: {
-            preload: path.join(__dirname, 'preloader.js'),
-            nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true,
-        }
-    });
-
-    remoteMain.enable(mainWindow.webContents)
-    if (isDev) {
-        mainWindow.webContents.openDevTools();
+    if(data){
+        autoUpdater.allowPrerelease = true
+    } else {
+        // Defaults to true if application version contains prerelease components (e.g. 0.12.1-alpha.1)
+        // autoUpdater.allowPrerelease = true
     }
 
-    mainWindow.loadURL('http://localhost:3000');
-    mainWindow.removeMenu()
-    mainWindow.resizable = true
-
-    mainWindow.on('closed', () => {
-        mainWindow = null
+    if(isDev){
+        autoUpdater.autoInstallOnAppQuit = false
+        autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
+    }
+    if(process.platform === 'darwin'){
+        autoUpdater.autoDownload = false
+    }
+    autoUpdater.on('update-available', (info) => {
+        event.sender.send('autoUpdateNotification', 'update-available', info)
     })
+    autoUpdater.on('update-downloaded', (info) => {
+        event.sender.send('autoUpdateNotification', 'update-downloaded', info)
+    })
+    autoUpdater.on('update-not-available', (info) => {
+        event.sender.send('autoUpdateNotification', 'update-not-available', info)
+    })
+    autoUpdater.on('checking-for-update', () => {
+        event.sender.send('autoUpdateNotification', 'checking-for-update')
+    })
+    autoUpdater.on('error', (err) => {
+        event.sender.send('autoUpdateNotification', 'realerror', err)
+    })
+}
 
-    checkForUpdates();
+ipcMain.on('autoUpdateAction', (event, arg, data) => {
+    switch(arg){
+        case 'initAutoUpdater':
+            console.log('Initializing auto updater.')
+            initAutoUpdater(event, data)
+            event.sender.send('autoUpdateNotification', 'ready')
+            break
+        case 'checkForUpdate':
+            autoUpdater.checkForUpdates()
+                .catch(err => {
+                    event.sender.send('autoUpdateNotification', 'realerror', err)
+                })
+            break
+        case 'allowPrereleaseChange':
+            if(!data){
+                const preRelComp = semver.prerelease(app.getVersion())
+                if(preRelComp != null && preRelComp.length > 0){
+                    autoUpdater.allowPrerelease = true
+                } else {
+                    autoUpdater.allowPrerelease = data
+                }
+            } else {
+                autoUpdater.allowPrerelease = data
+            }
+            break
+        case 'installUpdateNow':
+            autoUpdater.quitAndInstall()
+            break
+        default:
+            console.log('Unknown argument', arg)
+            break
+    }
+})
+// Redirect distribution index event from preloader to renderer.
+ipcMain.on('distributionIndexDone', (event, res) => {
+    event.sender.send('distributionIndexDone', res)
+})
+
+app.disableHardwareAcceleration()
+
+let win
+
+function createWindow() {
+
+    win = new BrowserWindow({
+        width: 980,
+        height: 552,
+        icon: getPlatformIcon('SealCircle'),
+        frame: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'assets', 'js', 'preloader.js'),
+            nodeIntegration: true,
+            contextIsolation: false
+        },
+        backgroundColor: '#171614'
+    })
+    remoteMain.enable(win.webContents)
+    if (isDev) {
+        win.webContents.openDevTools();
+    }
+console.log(fs.readdirSync(path.join(__dirname, 'assets', 'images', 'backgrounds')).length)
+    const data = {
+        bkid: Math.floor((Math.random() * fs.readdirSync(path.join(__dirname, 'assets', 'images', 'backgrounds')).length)),
+        version: appVersion
+    }
+    Object.entries(data).forEach(([key, val]) => ejse.data(key, val))
+
+    win.loadURL(pathToFileURL(path.join(__dirname, 'app', 'views', 'app.ejs')).toString())
+
+    /*win.once('ready-to-show', () => {
+        win.show()
+    })*/
+
+    win.removeMenu()
+
+    win.resizable = true
+
+    win.on('closed', () => {
+        win = null
+    })
 }
 
 function createMenu() {
@@ -133,8 +197,24 @@ function createMenu() {
 
 }
 
-app.whenReady().then(createWindow);
-app.whenReady().then(createMenu);
+function getPlatformIcon(filename){
+    let ext
+    switch(process.platform) {
+        case 'win32':
+            ext = 'ico'
+            break
+        case 'darwin':
+        case 'linux':
+        default:
+            ext = 'png'
+            break
+    }
+
+    return path.join(__dirname, 'assets', 'icons', `${filename}.${ext}`)
+}
+
+app.on('ready', createWindow)
+app.on('ready', createMenu)
 
 app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar
@@ -143,51 +223,10 @@ app.on('window-all-closed', () => {
         app.quit()
     }
 })
-
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) {
+    if (win === null) {
         createWindow()
     }
 })
-
-function checkForUpdates() {
-    autoUpdater.autoDownload = true;
-
-    // Écoute des événements liés à la mise à jour
-    autoUpdater.on('checking-for-update', () => {
-        console.log('Vérification des mises à jour...');
-    });
-
-    autoUpdater.on('update-available', (info) => {
-        console.log('Mise à jour disponible. Détails :', info);
-        mainWindow.webContents.send('update_available');
-    });
-
-    autoUpdater.on('update-not-available', () => {
-        console.log('Pas de mise à jour disponible.');
-        mainWindow.webContents.send('update_not_available');
-    });
-
-    autoUpdater.on('error', (err) => {
-        console.error('Erreur lors de la mise à jour :', err);
-        mainWindow.webContents.send('update_error', err);
-    });
-
-    autoUpdater.on('download-progress', (progressObj) => {
-        mainWindow.webContents.send('download_progress', progressObj);
-    });
-
-    autoUpdater.on('update-downloaded', (info) => {
-        console.log('Mise à jour téléchargée. Prêt à installer.');
-        mainWindow.webContents.send('update_downloaded');
-    });
-
-    // Lancer la vérification des mises à jour
-    autoUpdater.checkForUpdatesAndNotify();
-}
-
-ipcMain.on('restart_app', () => {
-    autoUpdater.quitAndInstall();
-});

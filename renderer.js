@@ -22,3 +22,4 @@ ipcRenderer.on('update_downloaded', () => {
     alert('Mise à jour téléchargée. L\'application va redémarrer pour installer la mise à jour.');
     ipcRenderer.send('restart_app');
 });
+

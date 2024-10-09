@@ -24,6 +24,7 @@ body, button {
     background-color: rgba(0, 0, 0, 0.5);
     -webkit-user-select: none;
     font-family: Arial, sans-serif;
+    color: white;
 }
 
 /* Undraggable region on the top of the frame. */
@@ -52,6 +53,8 @@ body, button {
     justify-content: space-between;
     width: 100%;
     -webkit-app-region: drag;
+    height: 30px;
+    height: 30px;
 }
 
 /* Main frame content for darwin. */
@@ -80,7 +83,6 @@ body, button {
     position: relative;
     top: -2px;
     right: -2px;
-    height: 22px;
 }
 #frameButtonDockWin > .frameButton:not(:first-child) {
     margin-left: -4px;
@@ -167,4 +169,18 @@ body, button {
 }
 #frameButtonDarwin_restoredown:active {
     background-color: #bfff76;
+}
+
+.close-button-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #fff;
 }
