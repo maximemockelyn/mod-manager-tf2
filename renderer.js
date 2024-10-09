@@ -1,15 +1,24 @@
 const { ipcRenderer } = require('electron');
 
-ipcRenderer.on('download-status', (event, status) => {
-    const progressBar = document.getElementById('progress-bar');
+// Événements écoutés pour la mise à jour
+ipcRenderer.on('update_available', () => {
+    alert('Une nouvelle mise à jour est disponible. Téléchargement en cours...');
+});
 
-    if (status.status === 'start') {
-        progressBar.style.width = '0%';
-        progressBar.textContent = 'Téléchargement en cours...';
-    } else if (status.status === 'complete') {
-        progressBar.style.width = '100%';
-        progressBar.textContent = 'Téléchargement terminé !';
-    } else if (status.status === 'error') {
-        progressBar.textContent = 'Erreur lors du téléchargement.';
-    }
+ipcRenderer.on('update_not_available', () => {
+    alert('Votre application est à jour.');
+});
+
+ipcRenderer.on('update_error', (event, error) => {
+    alert('Erreur lors de la mise à jour : ' + error);
+});
+
+ipcRenderer.on('download_progress', (event, progressObj) => {
+    let progress = Math.floor(progressObj.percent);
+    console.log(`Téléchargement : ${progress}%`);
+});
+
+ipcRenderer.on('update_downloaded', () => {
+    alert('Mise à jour téléchargée. L\'application va redémarrer pour installer la mise à jour.');
+    ipcRenderer.send('restart_app');
 });

@@ -22,6 +22,7 @@
     "ejs": "^3.1.10",
     "ejs-electron": "^3.0.0",
     "electron-dl": "^4.0.0",
+    "electron-is-dev": "^3.0.1",
     "electron-store": "^10.0.0",
     "electron-updater": "^6.3.9",
     "express": "^4.21.1",
@@ -33,11 +34,13 @@
     "unzipper": "^0.12.3"
   },
   "build": {
+    "appId": "com.modmanager.tf2",
     "publish": [
       {
         "provider": "github",
         "owner": "maximemockelyn",
-        "repo": "mod-manager-tf2"
+        "repo": "mod-manager-tf2",
+        "private": false
       }
     ]
   }
