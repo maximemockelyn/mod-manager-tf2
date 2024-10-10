@@ -19,6 +19,25 @@ document.addEventListener('DOMContentLoaded', () => {
         tempFolder: document.querySelector('#tempFolder')
     }
 
+    const releaseNotesContainer = document.getElementById('releaseNotes');
+
+    async function loadLatestRelease() {
+        try {
+            const response = await fetch('https://api.github.com/repos/maximemockelyn/mod-manager-tf2/releases/latest');
+            const data = await response.json();
+
+            // Vérifier si la réponse contient des notes de release
+            if (data && data.body) {
+                releaseNotesContainer.innerHTML = data.body;  // Insérer les notes dans le container
+            } else {
+                releaseNotesContainer.innerHTML = 'Aucune note de mise à jour disponible.';
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des notes de release :', error);
+            releaseNotesContainer.innerHTML = 'Impossible de récupérer les notes de mise à jour.';
+        }
+    }
+
     if(btn) {
         btn.btnBack.addEventListener('click', () => {
             switchView("#settingsContent", "#welcomeContainer")
@@ -67,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification('Impossible de sauvegarder le chemin. Veuillez vérifier.', 'danger');
             }
         })
-
-
     }
+
+    loadLatestRelease();
 })
 
