@@ -1,7 +1,7 @@
 const remoteMain = require('@electron/remote/main')
 remoteMain.initialize()
 
-const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, dialog } = require('electron');
 const autoUpdater = require('electron-updater').autoUpdater;
 const path = require('path');
 const fs = require('fs');
@@ -88,6 +88,32 @@ ipcMain.on('autoUpdateAction', (event, arg, data) => {
 ipcMain.on('distributionIndexDone', (event, res) => {
     event.sender.send('distributionIndexDone', res)
 })
+
+// Gestion de la sélection du dossier staging_area
+ipcMain.handle('select-staging-folder', async () => {
+    const result = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+    });
+
+    if (result.canceled) {
+        return null;  // Si l'utilisateur annule la sélection
+    } else {
+        return result.filePaths[0];  // Retourne le chemin du dossier sélectionné
+    }
+});
+
+// Gestion de la sélection du dossier temporaire
+ipcMain.handle('select-temp-folder', async () => {
+    const result = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+    });
+
+    if (result.canceled) {
+        return null;
+    } else {
+        return result.filePaths[0];
+    }
+});
 
 app.disableHardwareAcceleration()
 
