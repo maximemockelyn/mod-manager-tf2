@@ -4,17 +4,21 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "electron": "^32.1.2",
+    "electron-builder": "^25.1.7",
     "electron-log": "^5.2.0",
     "electron-reload": "^2.0.0-alpha.1",
-    "eslint": "^9.12.0"
+    "eslint": "^9.12.0",
+    "eslint-plugin-electron": "^7.0.0",
+    "eslint-plugin-node": "^11.1.0"
   },
   "dependencies": {
     "@electron/remote": "^2.1.2",
@@ -42,6 +46,32 @@
         "repo": "mod-manager-tf2",
         "private": false
       }
-    ]
+    ],
+    "productName": "Mod Manager TF2",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "main.js",
+      "renderer.js",
+      "preload.js",
+      "package.json",
+      "app/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    }
   }
 }
