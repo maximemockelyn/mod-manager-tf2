@@ -36,6 +36,7 @@ function initAutoUpdater(event, data) {
     }
     autoUpdater.on('update-available', (info) => {
         event.sender.send('autoUpdateNotification', 'update-available', info)
+
     })
     autoUpdater.on('update-downloaded', (info) => {
         event.sender.send('autoUpdateNotification', 'update-downloaded', info)
@@ -255,4 +256,11 @@ app.on('activate', () => {
     if (win === null) {
         createWindow()
     }
+})
+
+autoUpdater.on('update-available', (info) => {
+    win.webContents.send('updateAvailable', info);
+})
+autoUpdater.on('update-not-available', (info) => {
+    win.webContents.send('noUpdate');
 })

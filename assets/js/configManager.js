@@ -117,3 +117,16 @@ exports.setTempFolder = function(tempFolderPath) {
     config.settings.manager.tempFolder = tempFolderPath;
     exports.save();  // Sauvegarder après modification
 };
+
+exports.formatDate = function formatDate(isoDate) {
+    // Crée un objet Date à partir de la chaîne ISO 8601
+    const date = new Date(isoDate);
+
+    // Extrait l'année, le mois et le jour
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ajoute un zéro devant si le mois est sur un seul chiffre
+    const day = String(date.getDate()).padStart(2, '0'); // Ajoute un zéro devant si le jour est sur un seul chiffre
+
+    // Concatène pour obtenir le format YYYYMMDD
+    return `${year}${month}${day}`;
+}

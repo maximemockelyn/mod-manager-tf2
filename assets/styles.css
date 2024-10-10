@@ -202,3 +202,17 @@ body, button {
 #releaseNotes a:hover {
     text-decoration: underline;
 }
+
+#version-container {
+    color: #ddd;
+    font-size: 1em;
+}
+
+#version-container span {
+    margin-left: 5px;
+}
+
+#version-container .update-available {
+    color: red;
+    font-weight: bold;
+}

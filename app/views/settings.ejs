@@ -1,53 +1,54 @@
-<div id="settingsContent" class="container-fluid mt-5 bg-white bg-opacity-25 p-5" style="display: none;">
+<div id="settingsContent" class="container-fluid m-5" style="display: none;">
     <div class="close-button-container">
         <button id="backToMain" class="close-button">✖</button>
     </div>
-   <div class="d-flex h-100">
-       <nav class="bg-dark text-white p-3" style="width: 250px;">
-           <h4 class="text-white">Paramètres</h4>
-           <ul class="nav flex-column">
-               <li class="nav-item">
-                   <a class="nav-link text-white" href="#dossierSection" id="dossierLink">Dossiers</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link text-white" href="#aboutSection" id="aboutLink">À propos</a>
-               </li>
-           </ul>
-       </nav>
+    <div class="d-flex">
+        <nav class="bg-dark text-white p-3" style="width: 250px;">
+            <h4 class="text-white">Paramètres</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#dossierSection" id="dossierLink">Dossiers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#aboutSection" id="aboutLink">À propos</a>
+                </li>
+            </ul>
+        </nav>
 
-       <div class="flex-grow-1 p-4 bg-light">
-           <!-- Section Dossiers -->
-           <div id="dossierSection">
-               <h3>Dossiers</h3>
-               <div class="mb-3">
-                   <label for="stagingArea" class="form-label">Chemin du dossier staging_area</label>
-                   <div class="input-group">
-                       <input type="text" id="stagingArea" class="form-control" placeholder="Chemin du dossier staging_area">
-                       <button class="btn btn-secondary" id="selectStagingArea">Sélectionner un dossier</button>
-                   </div>
-                   <button class="btn btn-secondary mt-2" id="saveStagingArea">Modifier</button>
-               </div>
-               <div class="mb-3">
-                   <label for="tempFolder" class="form-label">Chemin du dossier temporaire</label>
-                   <div class="input-group">
-                       <input type="text" id="tempFolder" class="form-control" placeholder="Chemin du dossier temporaire">
-                       <button class="btn btn-secondary" id="selectTempFolder">Sélectionner un dossier</button>
-                   </div>
-                   <button class="btn btn-secondary mt-2" id="saveTempFolder">Modifier</button>
-               </div>
-           </div>
+        <div class="flex-grow-1 p-4 bg-light">
+            <!-- Section Dossiers -->
+            <div id="dossierSection">
+                <h3>Dossiers</h3>
+                <div class="mb-3">
+                    <label for="stagingArea" class="form-label">Chemin du dossier staging_area</label>
+                    <div class="input-group">
+                        <input type="text" id="stagingArea" class="form-control" placeholder="Chemin du dossier staging_area">
+                        <button class="btn btn-secondary" id="selectStagingArea">Sélectionner un dossier</button>
+                    </div>
+                    <button class="btn btn-secondary mt-2" id="saveStagingArea">Modifier</button>
+                </div>
+                <div class="mb-3">
+                    <label for="tempFolder" class="form-label">Chemin du dossier temporaire</label>
+                    <div class="input-group">
+                        <input type="text" id="tempFolder" class="form-control" placeholder="Chemin du dossier temporaire">
+                        <button class="btn btn-secondary" id="selectTempFolder">Sélectionner un dossier</button>
+                    </div>
+                    <button class="btn btn-secondary mt-2" id="saveTempFolder">Modifier</button>
+                </div>
+            </div>
 
-           <!-- Section À propos -->
-           <div id="aboutSection" style="display: none;">
-               <h3>À propos</h3>
-               <p>Version du programme : <span id="appVersion"><%= version %></span></p>
-               <p>Note de mise à jour :</p>
-               <div id="releaseNotes" class="border p-3">
-                   <!-- Release notes ici -->
-               </div>
-               <a href="https://github.com/TonRepo/releases" target="_blank" class="btn btn-primary mt-2">Voir la dernière release sur GitHub</a>
-           </div>
-       </div>
-   </div>
+            <!-- Section À propos -->
+            <div id="aboutSection" class="overflow-y-scroll" style="display: none;">
+                <h3>À propos</h3>
+                <p>Version du programme : <span id="appVersion"><%= version %></span></p>
+                <p>Note de mise à jour :</p>
+                <div id="releaseNotes" class="border p-3">
+                    <!-- Release notes ici -->
+                </div>
+                <a href="https://github.com/TonRepo/releases" target="_blank" class="btn btn-primary mt-2">Voir la dernière release sur GitHub</a>
+            </div>
+        </div>
+    </div>
+
     <script src="../../assets/js/scripts/settings.js"></script>
 </div>

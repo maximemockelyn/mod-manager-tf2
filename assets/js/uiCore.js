@@ -62,3 +62,16 @@ document.addEventListener('readystatechange', () => {
         LoggerUtil.log("Chargement Terminre...")
     }
 })
+
+ipcRenderer.on('updateAvailable', (event, info) => {
+    // Ajouter un indicateur visuel à côté du numéro de version
+    const versionElement = document.getElementById('version');
+    const updateIndicator = document.createElement('span');
+    updateIndicator.innerHTML = ' (Mise à jour disponible!)';
+    updateIndicator.style.color = 'red'; // Change la couleur pour que cela soit bien visible
+    versionElement.appendChild(updateIndicator);
+});
+
+ipcRenderer.on('noUpdate', () => {
+    console.log('Pas de mise à jour disponible.');
+});

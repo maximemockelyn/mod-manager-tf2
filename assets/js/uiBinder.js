@@ -8,7 +8,7 @@ let rscShouldLoad = false
 let fatalStartupError = false
 
 const VIEWS = {
-    landing: '#welcomContainer',
+    landing: '#welcomeContainer',
     settings: '#settingsContent'
 }
 
@@ -48,7 +48,7 @@ async function showMainUI(data){
                 console.log('click')
                 console.log(val, e)
                 $("#settingsContent").fadeIn(1000)
-                $("#welcomeContent").fadeOut(1000)
+                $("#welcomeContainer").fadeOut(1000)
             })
         })
 
@@ -89,3 +89,4 @@ document.addEventListener('readystatechange', async () => {
     }
 
 }, false)
+
