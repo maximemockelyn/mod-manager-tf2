@@ -21,13 +21,19 @@
                <h3>Dossiers</h3>
                <div class="mb-3">
                    <label for="stagingArea" class="form-label">Chemin du dossier staging_area</label>
-                   <input type="text" id="stagingArea" class="form-control" placeholder="Chemin du dossier staging_area">
-                   <button class="btn btn-secondary mt-2" id="changeStagingArea">Modifier</button>
+                   <div class="input-group">
+                       <input type="text" id="stagingArea" class="form-control" placeholder="Chemin du dossier staging_area">
+                       <button class="btn btn-secondary" id="selectStagingArea">Sélectionner un dossier</button>
+                   </div>
+                   <button class="btn btn-secondary mt-2" id="saveStagingArea">Modifier</button>
                </div>
                <div class="mb-3">
                    <label for="tempFolder" class="form-label">Chemin du dossier temporaire</label>
-                   <input type="text" id="tempFolder" class="form-control" placeholder="Chemin du dossier temporaire">
-                   <button class="btn btn-secondary mt-2" id="changeTempFolder">Modifier</button>
+                   <div class="input-group">
+                       <input type="text" id="tempFolder" class="form-control" placeholder="Chemin du dossier temporaire">
+                       <button class="btn btn-secondary" id="selectTempFolder">Sélectionner un dossier</button>
+                   </div>
+                   <button class="btn btn-secondary mt-2" id="saveTempFolder">Modifier</button>
                </div>
            </div>
 
