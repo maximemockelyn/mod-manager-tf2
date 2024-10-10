@@ -99,3 +99,21 @@ exports.setNewsCache = function(newsCache){
 exports.setNewsCacheDismissed = function(dismissed){
     config.newsCache.dismissed = dismissed
 }
+
+exports.getStagingArea = function() {
+    return config.settings.manager.stagingArea || '';
+};
+
+exports.setStagingArea = function(stagingAreaPath) {
+    config.settings.manager.stagingArea = stagingAreaPath;
+    exports.save();  // Sauvegarder après modification
+};
+
+exports.getTempFolder = function() {
+    return config.settings.manager.tempFolder || '';
+};
+
+exports.setTempFolder = function(tempFolderPath) {
+    config.settings.manager.tempFolder = tempFolderPath;
+    exports.save();  // Sauvegarder après modification
+};
