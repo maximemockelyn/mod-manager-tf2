@@ -16,7 +16,8 @@ body, button {
 
 /* Frame Bar */
 #frameBar {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 100;
     display: flex;
     flex-direction: column;
@@ -183,4 +184,21 @@ body, button {
     font-size: 24px;
     cursor: pointer;
     color: #fff;
+}
+
+#releaseNotes {
+    height: auto;
+    padding: 10px;
+    background-color: #f9f9f9; /* Couleur de fond pour différencier les notes */
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+#releaseNotes a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#releaseNotes a:hover {
+    text-decoration: underline;
 }

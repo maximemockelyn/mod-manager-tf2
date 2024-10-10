@@ -1,6 +1,12 @@
-
+const marked = require('marked');
 const configManager = require('../../assets/js/configManager');
 const { showNotification } = require('../../assets/js/notificationManager');
+
+marked.setOptions({
+    gfm: true,  // Activer GitHub Flavored Markdown
+    breaks: true,  // Gérer les sauts de ligne
+    sanitize: true  // Empêcher les balises HTML potentiellement dangereuses
+});
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -20,22 +26,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const releaseNotesContainer = document.getElementById('releaseNotes');
-
-    async function loadLatestRelease() {
-        try {
-            const response = await fetch('https://api.github.com/repos/maximemockelyn/mod-manager-tf2/releases/latest');
-            const data = await response.json();
-
-            // Vérifier si la réponse contient des notes de release
-            if (data && data.body) {
-                releaseNotesContainer.innerHTML = data.body;  // Insérer les notes dans le container
-            } else {
-                releaseNotesContainer.innerHTML = 'Aucune note de mise à jour disponible.';
-            }
-        } catch (error) {
-            console.error('Erreur lors de la récupération des notes de release :', error);
-            releaseNotesContainer.innerHTML = 'Impossible de récupérer les notes de mise à jour.';
-        }
+    function fetchAndDisplayReleaseNotes() {
+        fetch('https://api.github.com/repos/maximemockelyn/mod-manager-tf2/releases')
+            .then(response => response.json())
+            .then(data => {
+                if(data[0] && data[0].body) {
+                    const releaseNotesMarkdown = data[0].body; // Markdown des notes de mise à jour
+                    // Conversion en HTML
+                    releaseNotesContainer.innerHTML = marked.parse(releaseNotesMarkdown);
+                }else {
+                    releaseNotesContainer.innerHTML = "Aucune mise à jour disponible"
+                }
+            })
+            .catch(error => {
+                showNotification('Erreur lors de la récupération des notes de mise à jour', 'error', 2500)
+                console.error('Erreur lors de la récupération des notes de mise à jour:', error);
+            });
     }
 
     if(btn) {
@@ -88,6 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
-    loadLatestRelease();
+    fetchAndDisplayReleaseNotes();
 })
 
