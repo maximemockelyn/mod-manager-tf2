@@ -1,14 +1,12 @@
 const remoteMain = require('@electron/remote/main')
 remoteMain.initialize()
 
-const { app, BrowserWindow, ipcMain, Menu, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, dialog, globalShortcut } = require('electron');
 const autoUpdater = require('electron-updater').autoUpdater;
 const path = require('path');
 const fs = require('fs');
-const express = require('express');
 const ejse= require('ejs-electron')
 const { pathToFileURL } = require('url')
-const appExpress = express();
 const isDev = require('./assets/js/isDev');
 const semver = require('semver')
 const LoggerUtil = require('electron-log')
@@ -16,6 +14,13 @@ LoggerUtil.initialize()
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
 const appVersion = packageJson.version;
+
+if(isDev) {
+    require('electron-reload')(__dirname, {
+        electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+        ignored: /node_modules|[\/\\]\./
+    });
+}
 
 
 function initAutoUpdater(event, data) {
@@ -123,8 +128,8 @@ let win
 function createWindow() {
 
     win = new BrowserWindow({
-        width: 980,
-        height: 552,
+        width: 1200,
+        height: 728,
         icon: getPlatformIcon('SealCircle'),
         frame: false,
         webPreferences: {
@@ -135,6 +140,7 @@ function createWindow() {
         backgroundColor: '#171614'
     })
     remoteMain.enable(win.webContents)
+    console.log(isDev)
     if (isDev) {
         win.webContents.openDevTools();
     }
@@ -258,9 +264,15 @@ app.on('activate', () => {
     }
 })
 
+app.whenReady().then(() => {
+    globalShortcut.register('Ctrl+Shift+I', () => {
+        win.webContents.toggleDevTools();
+    })
+})
+
 autoUpdater.on('update-available', (info) => {
     win.webContents.send('updateAvailable', info);
 })
-autoUpdater.on('update-not-available', (info) => {
+autoUpdater.on('update-not-available', () => {
     win.webContents.send('noUpdate');
 })
