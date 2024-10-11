@@ -37,7 +37,7 @@ function downloadFile(url, dest, callback) {
 }
 
 // Fonction pour décompresser un fichier ZIP
-function extractZip(zipFilePath, extractTo, callback) {
+function extractZip(zipFilePath, extractTo) {
     console.log(`Décompression du fichier : ${zipFilePath}`);
     fs.createReadStream(zipFilePath)
         .pipe(unzipper.Extract({ path: extractTo }))

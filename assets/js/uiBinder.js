@@ -1,4 +1,3 @@
-const path = require('path')
 const isDev = require('../../assets/js/isDev')
 const ConfigManager = require('../../assets/js/configManager')
 const $ = require("jquery");

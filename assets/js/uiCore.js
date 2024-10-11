@@ -1,4 +1,4 @@
-const {ipcRenderer, shell, webFrame} = require('electron')
+const {ipcRenderer, webFrame} = require('electron')
 const remote = require('@electron/remote')
 //const isDev = require('../../assets/js/isDev')
 const LoggerUtil = require('electron-log')

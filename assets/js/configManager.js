@@ -1,5 +1,4 @@
 const fs = require('fs-extra')
-const os   = require('os')
 const path = require('path')
 const logger = require('electron-log')
 const sysRoot = process.env.APPDATA || (process.platform === 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
