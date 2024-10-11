@@ -8,7 +8,8 @@ let fatalStartupError = false
 
 const VIEWS = {
     landing: '#welcomeContainer',
-    settings: '#settingsContent'
+    settings: '#settingsContent',
+    newmod: '#newModContainer'
 }
 
 let currentView
@@ -81,6 +82,7 @@ document.addEventListener('readystatechange', async () => {
             rscShouldLoad = false
             if(!fatalStartupError){
                 await showMainUI(data)
+                currentView = VIEWS.landing
             } else {
                 showFatalStartupError()
             }
