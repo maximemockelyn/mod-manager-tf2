@@ -2,8 +2,8 @@
 name: "✨ Demande de Fonctionnalité"
 about: "Proposer une nouvelle fonctionnalité ou amélioration"
 title: "[Feature] :"
-labels: "enhancement"
-assignees: ''
+labels: "Features Requests"
+assignees: 'maximemockelyn'
 
 ---
 

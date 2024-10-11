@@ -2,8 +2,8 @@
 name: "🛑 Rapport de Bug"
 about: "Signaler un bug pour aider à améliorer le projet"
 title: "[BUG] :"
-labels: "bug"
-assignees: ''
+labels: "Bugs"
+assignees: 'maximemockelyn'
 
 ---
 
