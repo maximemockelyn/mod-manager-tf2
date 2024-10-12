@@ -216,3 +216,8 @@ body, button {
     color: red;
     font-weight: bold;
 }
+
+label span {
+    content: "*";
+    color: red;
+}

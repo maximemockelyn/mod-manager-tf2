@@ -10,6 +10,8 @@ const { pathToFileURL } = require('url')
 const isDev = require('./assets/js/isDev');
 const semver = require('semver')
 const LoggerUtil = require('electron-log')
+const ConfigManager  = require('./assets/js/configManager')
+ConfigManager.load()
 LoggerUtil.initialize()
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
@@ -275,4 +277,48 @@ autoUpdater.on('update-available', (info) => {
 })
 autoUpdater.on('update-not-available', () => {
     win.webContents.send('noUpdate');
+})
+
+ipcMain.on('create-new-mod', (event, modData) => {
+    const {nameMod, descMod, modSeverityAdd, modSeverityRemove, authorsMod, tagsMod} = modData;
+
+    const tempFolder = ConfigManager.getTempFolder();
+
+    if(!tempFolder) {
+        event.reply('mod-created', {success: false, error: 'Le dossier temporaire n\'est pas configurer'});
+        return;
+    }
+
+    const modDir = path.join(tempFolder, nameMod)
+
+    if(fs.existsSync(modDir)) {
+        event.reply('mod-created', {success: false, error: "Le dossier mod existe déjà"})
+        return;
+    }
+
+    try {
+        fs.ensureDirSync(modDir)
+
+        const modLuaContent = `
+        return {
+            minorVersion = 1,
+            name="${nameMod}",
+            description="${descMod}",
+            severityAdd = "${modSeverityAdd}",
+            severityRemove = "${modSeverityRemove}",
+            authors = {
+                ${authorsMod.split(',').map(author => `"${author.trim()}"`).join(',\n')},
+            },
+            tags = {
+                ${modTags.split(',').map(tag => `"${tag.trim()}"`).join(', ')}
+            }
+            visible = true,
+        }
+        `;
+
+        fs.writeFileSync(path.join(modDir, 'mod.lua'), modLuaContent)
+        event.reply('mod-created', {success: true})
+    } catch (error) {
+        event.reply('mod-created', {success: false, error: error.message})
+    }
 })

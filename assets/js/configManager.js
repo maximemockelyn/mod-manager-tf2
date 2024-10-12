@@ -3,23 +3,13 @@ const path = require('path')
 const logger = require('electron-log')
 const sysRoot = process.env.APPDATA || (process.platform === 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
 const dataPath = path.join(sysRoot, '.modManagerTf2')
-const managerDir = require('@electron/remote').app.getPath('userData')
 
-exports.getManagerDirectory = function(){
-    return managerDir
-}
 
-exports.getDataDirectory = function(def = false){
-    return !def ? config.settings.manager.dataDirectory : DEFAULT_CONFIG.settings.manager.dataDirectory
-}
-
-exports.setDataDirectory = function(dataDirectory){
-    config.settings.manager.dataDirectory = dataDirectory
-}
-
-const configPath = path.join(exports.getManagerDirectory(), 'config.json')
+const configPath = path.join(process.env.APPDATA, 'config.json')
 const configPathLEGACY = path.join(dataPath, 'config.json')
 const firstLaunch = !fs.existsSync(configPath) && !fs.existsSync(configPathLEGACY)
+
+console.log(configPathLEGACY)
 
 const DEFAULT_CONFIG = {
     settings: {
