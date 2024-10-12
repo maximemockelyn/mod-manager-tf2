@@ -1,10 +1,47 @@
-<div id="newModContainer" style="display: none">
-    <div class="d-flex flex-center justify-content-center">
-        <div class="card m-5 w-100">
-            <div class="card-body">
-                <h5 class="card-title">Création d'un nouveau mod</h5>
-
-            </div>
+<div id="newModContainer" class="overflow-y-scroll" style="display: none">
+    <div class="card m-5" style="width: 800px">
+        <div class="card-body">
+            <h5 class="card-title">Création d'un nouveau mod</h5>
+            <form action="" id="formNewMod">
+                <div class="mb-3">
+                    <label for="nameMod" class="form-label required">Nom du mod <span class="required">*</span></label>
+                    <input type="text" id="nameMod" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="descMod" class="form-label required">Description du mod <span class="required">*</span></label>
+                    <textarea id="descMod" class="form-control" cols="30" rows="10" required></textarea>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="modSeverityAdd" class="form-label required">Sévérité du mod au démarrage <span class="required">*</span></label>
+                        <select id="modSeverityAdd" class="form-select" required>
+                            <option value="NONE">NONE</option>
+                            <option value="WARNING">WARNING</option>
+                            <option value="CRITICAL">CRITICAL</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="modSeverityRemove" class="form-label required">Sévérité du mod à la suppression <span class="required">*</span></label>
+                        <select id="modSeverityRemove" class="form-select" required>
+                            <option value="NONE">NONE</option>
+                            <option value="WARNING">WARNING</option>
+                            <option value="CRITICAL">CRITICAL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="authorsMod" class="form-label required">Auteurs du mod <span class="required">*</span></label>
+                    <input type="text" id="authorsMod" class="form-control" required>
+                    <span class="fst-italic fs-6">Nom de/des auteurs du mod séparé par une virgule</span>
+                </div>
+                <div class="mb-3">
+                    <label for="tagsMod" class="form-label required">Tags du mod <span class="required">*</span></label>
+                    <input type="text" id="tagsMod" class="form-control" required>
+                    <span class="fst-italic fs-6">Tags du mod séparé par une virgule</span>
+                </div>
+                <button type="submit" class="btn btn-success">Valider</button>
+            </form>
         </div>
     </div>
+    <script src="../../assets/js/scripts/newmod.js"></script>
 </div>
